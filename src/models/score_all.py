@@ -179,6 +179,7 @@ def main(epochs: int = 10, batch_size: int = 512) -> None:
         history_path.write_text(json.dumps(history_dict, indent=2), encoding="utf-8")
         log_print(f"  History -> {history_path}")
 
+<<<<<<< HEAD
     # ── 6. Align scores by timestamp (left join on IF index) ────────────────
     # Left join keeps every IF-scored minute; LSTM scores fill in where
     # timestamps match. Early LSTM windows (before tabular features start)
@@ -186,6 +187,12 @@ def main(epochs: int = 10, batch_size: int = 512) -> None:
     _section(log_print, "Alignment & Agreement")
 
     combined = scores_if.join(scores_lstm, how="left")
+=======
+    # ── 6. Align scores by timestamp (outer join) ───────────────────────────
+    _section(log_print, "Alignment & Agreement")
+
+    combined = scores_if.join(scores_lstm, how="outer")
+>>>>>>> f57149dcdca90c22ba533cda4d8625ed83e75941
 
     if TF_AVAILABLE and len(scores_lstm) > 0:
         both_valid = combined["if_flag"].notna() & combined["lstm_flag"].notna()
@@ -207,7 +214,10 @@ def main(epochs: int = 10, batch_size: int = 512) -> None:
     scores_path = MODELS_DIR / "scores.parquet"
     combined.to_parquet(scores_path)
     log_print(f"\nScores -> {scores_path}  shape={combined.shape}")
+<<<<<<< HEAD
     log_print(f"  (IF rows: {len(scores_if):,}  |  LSTM rows joined: {combined['lstm_recon_error'].notna().sum():,})")
+=======
+>>>>>>> f57149dcdca90c22ba533cda4d8625ed83e75941
 
     # ── 8. Top-10 agreement preview ─────────────────────────────────────────
     if TF_AVAILABLE and "agreement" in combined.columns:
